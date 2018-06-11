@@ -16,15 +16,24 @@ function createWindow() {
     slashes: true
   }));
 
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 
   win.on('closed', () => {
     win = null;
   })
 }
 
-ipc.on("open-box", function(event) {
-  dialog.showErrorBox("This is a message!", "Clicked");
+
+// Event handler for asynchronous incoming messages
+ipc.on("async-message", function(event) {
+  // Event emitter for sending asynchronous messages
+  event.sender.send('async-reply', 'Reply message')
+})
+
+// Event handler for synchronous incoming messages
+ipc.on("sync-message", function(event) {
+  // Synchronous event emmision
+  event.returnValue = "sync-reply";
 })
 
 app.on('ready', createWindow);
